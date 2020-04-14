@@ -50,7 +50,7 @@ def separate_data(bits: list) -> list:
     pass
 
 
-# encodes given list of 4 bits into a Hamming (7,4) code todo
+# encodes a given list of 4 bits into a Hamming (7,4) code todo
 def encode_hamming(bits: list) -> list:
     datamat = np.array(bits)
     data_matrix = np.array([(bits[0]), (bits[1]), (bits[2]), (bits[3])])
@@ -60,12 +60,12 @@ def encode_hamming(bits: list) -> list:
     # return bits
 
 
-# decodes given list of 7 bits of Hamming (7,4) code into 4 bits of data if possible, otherwise returns None todo
+# decodes a given list of 7 bits of Hamming (7,4) code into 4 bits of data if possible, otherwise returns None todo
 def decode_hamming(bits: list) -> list:
     return None
 
 
-# expects 4 bits
+# encodes a given list of 4 bits into a list of 5 bits with a parity bit
 def encode_parity(bits: list) -> list:
     i = 0
     for bit in bits:
@@ -74,7 +74,7 @@ def encode_parity(bits: list) -> list:
     return bits
 
 
-# expects 5 bits
+# "decodes" a given list of 5 bits with a parity bit into a list of 4 bits of data, if the parity bit is correct
 def decode_parity(bits: list) -> list:
     i = 0
     for bit in bits:
@@ -88,17 +88,33 @@ def decode_parity(bits: list) -> list:
         return None
 
 
-# expects 4 bits, todo powtarzanie bitu razy 3, czy może 4?
+# encodes a given list of 4 bits into a list of 12 bits, where each bit is tripled
 def encode_repeat(bits: list) -> list:
-    pass
+    new_bits = []
+    for bit in bits:
+        for i in range(0, 3):
+            new_bits.append(bit)
+    return new_bits
 
 
-# expects
+# decodes a given list of 12 bits into a list of 4 bits
 def decode_repeat(bits: list) -> list:
-    pass
+    index = 1
+    sum = 0
+    new_bits = []
+    for bit in bits:
+        sum += bit
+        if index == 3:
+            index = 0
+            if sum > 1:
+                new_bits.append(1)
+            else:
+                new_bits.append(0)
+            sum = 0
+        index += 1
+    return new_bits
 
-
-# prints data generated with generate_random_data_bool
+# prints data generated with generate_random_data
 def print_data(bits: list):
     print(f"Data of a list with id:{id(bits)}: [", end='')
     for bit in bits:

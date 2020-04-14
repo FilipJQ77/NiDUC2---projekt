@@ -26,3 +26,10 @@ if lista is not None:
     data.print_data(lista)
 else:
     print("oof")
+
+while True:
+    lista = data.generate_random_data(4)
+    nowa_lista = data.encode_repeat(lista)
+    nowa_lista = data.decode_repeat(nowa_lista)
+    if lista != nowa_lista:
+        print("oof")
