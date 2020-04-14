@@ -17,19 +17,24 @@ import data
 # lista = data.generate_random_data(10)
 # data.encode_hamming(lista)
 
-lista = data.generate_random_data(4)
-data.print_data(lista)
-lista = data.encode_parity(lista)
-data.print_data(lista)
-lista = data.decode_parity(lista)
-if lista is not None:
-    data.print_data(lista)
-else:
-    print("oof")
+# lista = data.generate_random_data(4)
+# data.print_data(lista)
+# lista = data.encode_parity(lista)
+# data.print_data(lista)
+# lista = data.decode_parity(lista)
+# if lista is not None:
+#     data.print_data(lista)
+# else:
+#     print("oof")
 
-while True:
-    lista = data.generate_random_data(4)
-    nowa_lista = data.encode_repeat(lista)
-    nowa_lista = data.decode_repeat(nowa_lista)
-    if lista != nowa_lista:
-        print("oof")
+# while True:
+#     lista = data.generate_random_data(4)
+#     nowa_lista = data.encode_repeat(lista)
+#     nowa_lista = data.decode_repeat(nowa_lista)
+#     if lista != nowa_lista:
+#         print("oof")
+
+lista1 = data.generate_random_data(13)
+data.print_data(lista1)
+lista2 = data.separate_data(lista1, 3)
+print(lista2)
