@@ -4,9 +4,6 @@
 import data
 import hamming
 
-def abc():
-    pass
-
 # lista = data.generate_random_data(10)
 # data.print_data_bool(lista)
 
