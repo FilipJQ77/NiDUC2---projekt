@@ -34,6 +34,8 @@ def print_data_bool(bits: list):
             pass
     print("]")
 
+def cos():
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
 # generates given amount of random data
 def generate_random_data(amount: int) -> list:
