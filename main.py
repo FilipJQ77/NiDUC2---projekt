@@ -2,7 +2,6 @@
 # import random
 # import time
 import data
-import hamming
 
 # lista = data.generate_random_data(10)
 # data.print_data_bool(lista)
