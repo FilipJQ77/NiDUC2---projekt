@@ -12,7 +12,6 @@ def decode_repetition(bits: list) -> list:
     index = 1
     summ = 0
     if_fixed = ""
-
     new_bits = []
     for bit in bits:
         summ += bit
