@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import hamming
+import repetition
 
 
 # reshape
@@ -68,17 +69,7 @@ def distort_bits(bits: list, probability: int) -> list:
 
 
 # todo temporary
-def encode_bch(bits: list) -> list:
-    return bits
-
-
-# todo temporary
 def encode_crc(bits: list) -> list:
-    return bits
-
-
-# todo temporary
-def decode_bch(bits: list) -> list:
     return bits
 
 
@@ -89,8 +80,8 @@ def decode_crc(bits: list) -> list:
 
 # encodes a block of data with a given type of code
 def encode_data(block_of_data: list, code_type: str) -> list:
-    if code_type == "B":
-        block_of_data = encode_bch(block_of_data)
+    if code_type == "R":
+        block_of_data = repetition.encode_repetition(block_of_data)
     elif code_type == "C":
         block_of_data = encode_crc(block_of_data)
     elif code_type == "H":
@@ -99,8 +90,8 @@ def encode_data(block_of_data: list, code_type: str) -> list:
 
 
 def decode_data(block_of_data: list, code_type: str) -> list:
-    if code_type == "B":
-        block_of_data = decode_bch(block_of_data)
+    if code_type == "R":
+        block_of_data = repetition.decode_repetition(block_of_data)
         pass
     elif code_type == "C":
         block_of_data = decode_crc(block_of_data)
@@ -150,30 +141,3 @@ def sending_data(bits: list, block_size: int, code_type: str, probabilty: int) -
 
     return data_results
 
-
-# todo Aga to jest twój kod do edycji
-# encodes a given list of 4 bits into a list of 12 bits, where each bit is tripled
-def encode_repeat(bits: list) -> list:
-    new_bits = []
-    for bit in bits:
-        for i in range(0, 3):
-            new_bits.append(bit)
-    return new_bits
-
-
-# decodes a given list of 12 bits into a list of 4 bits
-def decode_repeat(bits: list) -> list:
-    index = 1
-    summ = 0
-    new_bits = []
-    for bit in bits:
-        summ += bit
-        if index == 3:
-            index = 0
-            if summ > 1:
-                new_bits.append(1)
-            else:
-                new_bits.append(0)
-            summ = 0
-        index += 1
-    return new_bits
