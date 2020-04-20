@@ -18,14 +18,14 @@ def encode_hamming(bits: list) -> list:
         summ = 0
         while i <= bits_amount:
             for j in range(index):
-                # todo ten if jest po to że jeśli mamy niepełny kod hamminga to nie wiemy kiedy jest koniec danych
+                # todo ten if jest po to że jeśli mamy ucięty kod hamminga to nie wiemy kiedy jest koniec danych
                 if i <= bits_amount:
                     summ += bits[i - 1]
                     i += 1
             i += index
         bits[index - 1] = summ % 2
         index *= 2
-    #po zakodowaniu wiadomosci zwyklym hammingiem dodajemy na koniec dodatkowy bit parzystosci (SECDED)
+    # po zakodowaniu wiadomosci zwyklym hammingiem dodajemy na koniec dodatkowy bit parzystosci (SECDED)
     summ = 0
     for i in range(bits_amount):
         summ += bits[i]
@@ -40,14 +40,14 @@ def decode_hamming(bits: list) -> list:
     bits_amount = len(bits)
     index = 1
     wrong_bit_index = 0
-    if_fixed = 0
-    while index <= bits_amount:
+    if_fixed = ""
+    while index < bits_amount:
         i = index
         summ = 0
-        while i <= bits_amount:
+        while i < bits_amount:
             for j in range(index):
-                # todo ten if jest po to że jeśli mamy niepełny kod hamminga to nie wiemy kiedy jest koniec danych
-                if i <= bits_amount:
+                # todo ten if jest po to że jeśli mamy ucięty kod hamminga to nie wiemy kiedy jest koniec danych
+                if i < bits_amount:
                     summ += bits[i - 1]
                     i += 1
             i += index
@@ -61,14 +61,14 @@ def decode_hamming(bits: list) -> list:
             bits[wrong_bit_index] = 0
         else:
             bits[wrong_bit_index] = 1
-         # sprawdzamy czy ostatni bit parzystości jest dobry
+        # sprawdzamy czy ostatni bit parzystości jest dobry
         summ = 0
-        for i in range(len(bits) - 1):
+        for i in range(bits_amount - 1):
             summ += bits[i]
-        if summ % 2 == bits[len(bits) - 1]:
-            if_fixed = 1   # jesli sie zgadza to uznajemy za naprawiony
+        if summ % 2 == bits[bits_amount - 1]:
+            if_fixed = "F"  # jesli sie zgadza to uznajemy za naprawiony
         else:
-            return "R"     # jesli sie nie zgadza to zwracamy R
+            return ["R"]  # jesli sie nie zgadza to zwracamy R
 
     index = 1
     new_bits = []
@@ -78,5 +78,5 @@ def decode_hamming(bits: list) -> list:
         else:
             new_bits.append(bits[i])
     if if_fixed:
-      new_bits.append("F")  #jesli wiadomosc byla naprawiana dodajemy na koniec F
+        new_bits.append(if_fixed)  # jesli wiadomosc byla naprawiana dodajemy na koniec F
     return new_bits
