@@ -72,7 +72,7 @@ def decode_hamming(bits: list) -> list:
 
     index = 1
     new_bits = []
-    for i in range(bits_amount):
+    for i in range(bits_amount - 1):
         if i + 1 == index:
             index *= 2
         else:
