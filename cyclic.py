@@ -47,7 +47,7 @@ def decode_cyclic(bits:list ) -> list:
         suma+=bits_tem[bits_amoun -1 - i]
 
     for i in range(len(dzielnik)-1):
-        del bits[len(bits)-1]
+        bits.pop(-1)
     
     if suma!=0:
         bits.append("R")         
