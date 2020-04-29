@@ -1,15 +1,8 @@
 import random
-import numpy as np
+import crc
 import hamming
 import repetition
 
-
-# reshape
-# binary symmetric channel
-# 3 algorytmy
-# różna ilość bitów w pakiecie
-# kod bch
-# kod crc
 
 # generates given amount of random data
 def generate_random_data(amount: int) -> list:
@@ -68,22 +61,12 @@ def distort_bits(bits: list, probability: int) -> list:
     return bits
 
 
-# todo temporary
-def encode_crc(bits: list) -> list:
-    return bits
-
-
-# todo temporary
-def decode_crc(bits: list) -> list:
-    return bits
-
-
 # encodes a block of data with a given type of code
 def encode_data(block_of_data: list, code_type: str) -> list:
     if code_type == "R":
         block_of_data = repetition.encode_repetition(block_of_data)
     elif code_type == "C":
-        block_of_data = encode_crc(block_of_data)
+        block_of_data = crc.encode_crc(block_of_data)
     elif code_type == "H":
         block_of_data = hamming.encode_hamming(block_of_data)
     return block_of_data
@@ -94,7 +77,7 @@ def decode_data(block_of_data: list, code_type: str) -> list:
         block_of_data = repetition.decode_repetition(block_of_data)
         pass
     elif code_type == "C":
-        block_of_data = decode_crc(block_of_data)
+        block_of_data = crc.decode_crc(block_of_data)
         pass
     elif code_type == "H":
         block_of_data = hamming.decode_hamming(block_of_data)
@@ -102,36 +85,31 @@ def decode_data(block_of_data: list, code_type: str) -> list:
     return block_of_data
 
 
-# todo symulacja przesyłania danych, code_type to typ kodu (crc, bch itp)
 # todo zwraca co się stało tzn. czy wiadomość odebrana była poprawna, czy wykryto błąd, naprawiono błąd itp.
-def sending_data(bits: list, block_size: int, code_type: str, probabilty: int) -> str:
+def sending_data(bits: list, block_size: int, code_type: str, probability: int) -> str:
     separated_data = separate_data(bits, block_size)
     data_size = len(separated_data)
     sent_data = []
     for block in separated_data:
         sent_data.append(encode_data(block, code_type))
     for i in range(data_size):
-        sent_data[i] = distort_bits(sent_data[i], probabilty)
+        sent_data[i] = distort_bits(sent_data[i], probability)
     decoded_data = []
-    block_results = ["" for x in range(data_size)]
+    # block_results = ["" for x in range(data_size)]
     for i in range(data_size):
         while True:
             decoded_data.append(decode_data(sent_data[i], code_type))
-            # todo ---> każdy sposób dekodowania musi dodawać na koniec info co się stało,
-            #  jeśli ostatnim elementem bloku jest "F" (fixed) to wiemy że udało się naprawić informację,
-            #  jeśli "R" (repeat) to musimy wysłać informację jeszcze raz,
-            #  jeśli nie ma ani F ani R, to informacja według dekodera jest poprawna
             if (decoded_data[-1])[-1] == "F":
-                block_results[i] += "F"
+                # block_results[i] += "F"
                 decoded_data[-1].pop()
                 break
             elif (decoded_data[-1])[-1] == "R":
-                block_results[i] += "R"
+                # block_results[i] += "R"
                 decoded_data[-1].pop()
             else:
-                block_results[i] += "C"  # correct
+                # block_results[i] += "C"  # correct
                 break
-    len(block_results)  # de facto liczba wysłań bloków
+    # len(block_results)
     data_results = {"Correct": 0, "Fixed correctly": 0, "Fixed wrongly": 0, "Didn't detect error": 0}
     for i in range(data_size):
         if separated_data[i] == decoded_data[i]:
@@ -140,4 +118,3 @@ def sending_data(bits: list, block_size: int, code_type: str, probabilty: int) -
             pass
 
     return data_results
-

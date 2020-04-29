@@ -1,4 +1,4 @@
-#
+# encodes given list of bits with a repetition code (repeating each bit 4 times)
 def encode_repetition(bits: list) -> list:
     new_bits = []
     for bit in bits:
@@ -7,11 +7,11 @@ def encode_repetition(bits: list) -> list:
     return new_bits
 
 
-#
+# decodes given list of bits with a repetition code (repeating each bit 4 times)
 def decode_repetition(bits: list) -> list:
     index = 1
     summ = 0
-    if_fixed = ""
+    fixed = ""
     new_bits = []
     for bit in bits:
         summ += bit
@@ -20,15 +20,15 @@ def decode_repetition(bits: list) -> list:
             if summ > 2:
                 new_bits.append(1)
                 if summ == 3:
-                    if_fixed = "F"
+                    fixed = "F"
             elif summ < 2:
                 new_bits.append(0)
                 if summ == 1:
-                    if_fixed = "F"
+                    fixed = "F"
             else:
                 return ["R"]
             summ = 0
         index += 1
-    if if_fixed:
-        new_bits.append(if_fixed)
+    if fixed:
+        new_bits.append(fixed)
     return new_bits

@@ -1,7 +1,4 @@
-import numpy as np
-import math
-
-
+# encodes given list of bits with a Hamming code
 # https://en.wikipedia.org/wiki/Hamming_code#General_algorithm
 def encode_hamming(bits: list) -> list:
     bits_amount = len(bits)
@@ -18,14 +15,14 @@ def encode_hamming(bits: list) -> list:
         summ = 0
         while i <= bits_amount:
             for j in range(index):
-                # todo ten if jest po to że jeśli mamy ucięty kod hamminga to nie wiemy kiedy jest koniec danych
+                # ten if jest po to że jeśli mamy ucięty kod hamminga to nie wiemy kiedy jest koniec danych
                 if i <= bits_amount:
                     summ += bits[i - 1]
                     i += 1
             i += index
         bits[index - 1] = summ % 2
         index *= 2
-    # po zakodowaniu wiadomosci zwyklym hammingiem dodajemy na koniec dodatkowy bit parzystosci (SECDED)
+    # after encoding the information with Hamming code we add an extra parity bit (SECDED)
     summ = 0
     for i in range(bits_amount):
         summ += bits[i]
@@ -33,20 +30,18 @@ def encode_hamming(bits: list) -> list:
     return bits
 
 
-# todo dodanie jeszcze jednego bitu parzystości aby wykrywać błędy 2 bitów, <- zrobione
-#  ogarnąć co sie dzieje gdy indeks złego bitu jest poza zakresem listy
-#  może być problem z dekodowaniem listy, ponieważ ostatni bit jest dodatkowym bitem parzystości
+# decodes given list of bits with a Hamming code
 def decode_hamming(bits: list) -> list:
     bits_amount = len(bits)
     index = 1
     wrong_bit_index = 0
-    if_fixed = ""
+    fixed = ""
     while index < bits_amount:
         i = index
         summ = 0
         while i < bits_amount:
             for j in range(index):
-                # todo ten if jest po to że jeśli mamy ucięty kod hamminga to nie wiemy kiedy jest koniec danych
+                # ten if jest po to że jeśli mamy ucięty kod hamminga to nie wiemy kiedy jest koniec danych
                 if i < bits_amount:
                     summ += bits[i - 1]
                     i += 1
@@ -54,22 +49,21 @@ def decode_hamming(bits: list) -> list:
         if summ % 2 != 0:
             wrong_bit_index += index
         index *= 2
-
     if wrong_bit_index:
         wrong_bit_index -= 1
         if bits[wrong_bit_index]:
             bits[wrong_bit_index] = 0
         else:
             bits[wrong_bit_index] = 1
-        # sprawdzamy czy ostatni bit parzystości jest dobry
         summ = 0
+        # checking the additional parity bit
         for i in range(bits_amount - 1):
             summ += bits[i]
-        if summ % 2 == bits[bits_amount - 1]:
-            if_fixed = "F"  # jesli sie zgadza to uznajemy za naprawiony
+        # todo check
+        if summ % 2 == bits[-1]:
+            fixed = "F"
         else:
-            return ["R"]  # jesli sie nie zgadza to zwracamy R
-
+            return ["R"]
     index = 1
     new_bits = []
     for i in range(bits_amount - 1):
@@ -77,6 +71,6 @@ def decode_hamming(bits: list) -> list:
             index *= 2
         else:
             new_bits.append(bits[i])
-    if if_fixed:
-        new_bits.append(if_fixed)  # jesli wiadomosc byla naprawiana dodajemy na koniec F
+    if fixed:
+        new_bits.append(fixed)
     return new_bits
