@@ -96,6 +96,9 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: int) 
         sent_data[i] = distort_bits(sent_data[i], probability)
     decoded_data = []
     # block_results = ["" for x in range(data_size)]
+    # todo data_results
+    # todo stringi jako stałe(zmienne)
+    # todo data results + parametry jako csv, symulacja monte carlo
     for i in range(data_size):
         while True:
             decoded_data.append(decode_data(sent_data[i], code_type))
@@ -110,7 +113,7 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: int) 
                 # block_results[i] += "C"  # correct
                 break
     # len(block_results)
-    data_results = {"Correct": 0, "Fixed correctly": 0, "Fixed wrongly": 0, "Didn't detect error": 0}
+    data_results = {"Correct": 0, "Fixed": 0, "Repeat": 0, "Wrong": 0}
     for i in range(data_size):
         if separated_data[i] == decoded_data[i]:
             data_results["Correct"] += 1

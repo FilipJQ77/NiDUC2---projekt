@@ -7,7 +7,7 @@ lista1 = data.generate_random_data(11)
 data.print_data(lista1)
 lista1 = data.encode_data(lista1, "H")
 data.print_data(lista1)
-what_to_test = "F"  # todo albo "R", w zależności co testujesz
+what_to_test = "R"  # todo albo "R", w zależności co testujesz
 lista_size = len(lista1) - 1
 if what_to_test == "F":
     i1 = random.randint(0, lista_size)
