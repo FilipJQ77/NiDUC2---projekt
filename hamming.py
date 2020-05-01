@@ -1,11 +1,12 @@
 # encodes given list of bits with a Hamming code
 # https://en.wikipedia.org/wiki/Hamming_code#General_algorithm
 def encode_hamming(bits: list) -> list:
-    bits_amount = len(bits)
+    new_bits = list.copy(bits)
+    bits_amount = len(new_bits)
     index = 1
     # adding parity bits in correct places to the list
     while index <= bits_amount:
-        bits.insert(index - 1, 0)
+        new_bits.insert(index - 1, 0)
         bits_amount += 1
         index *= 2
     # algorithm step 5
@@ -17,17 +18,17 @@ def encode_hamming(bits: list) -> list:
             for j in range(index):
                 # ten if jest po to że jeśli mamy ucięty kod hamminga to nie wiemy kiedy jest koniec danych
                 if i <= bits_amount:
-                    summ += bits[i - 1]
+                    summ += new_bits[i - 1]
                     i += 1
             i += index
-        bits[index - 1] = summ % 2
+        new_bits[index - 1] = summ % 2
         index *= 2
     # after encoding the information with Hamming code we add an extra parity bit (SECDED)
     summ = 0
     for i in range(bits_amount):
-        summ += bits[i]
-    bits.append(summ % 2)
-    return bits
+        summ += new_bits[i]
+    new_bits.append(summ % 2)
+    return new_bits
 
 
 # decodes given list of bits with a Hamming code

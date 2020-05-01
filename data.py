@@ -3,6 +3,12 @@ import crc
 import hamming
 import repetition
 
+crc_code = "C"
+hamming_code = "H"
+repetition_code = "R"
+fixed_message = "F"
+repeat_message = "R"
+
 
 # generates given amount of random data
 def generate_random_data(amount: int) -> list:
@@ -43,9 +49,9 @@ def separate_data(bits: list, n: int) -> list:
 
 
 # basic distortion of a single bit, probability is in range [0,100]
-def distort_bit(bit: int, probability: int) -> int:
-    rand = random.randint(0, 100)
-    if rand >= probability:
+def distort_bit(bit: int, probability: float) -> int:
+    rand = random.uniform(0, 1)
+    if rand < probability:
         if bit == 0:
             bit = 1
         else:
@@ -54,7 +60,7 @@ def distort_bit(bit: int, probability: int) -> int:
 
 
 # basic distortion of data, probability is in range [0,100] todo pomyśleć nad innymi implementacjami
-def distort_bits(bits: list, probability: int) -> list:
+def distort_bits(bits: list, probability: float) -> list:
     size = len(bits)
     for i in range(0, size):
         bits[i] = distort_bit(bits[i], probability)
@@ -63,61 +69,68 @@ def distort_bits(bits: list, probability: int) -> list:
 
 # encodes a block of data with a given type of code
 def encode_data(block_of_data: list, code_type: str) -> list:
-    if code_type == "R":
+    if code_type == repetition_code:
         block_of_data = repetition.encode_repetition(block_of_data)
-    elif code_type == "C":
+    elif code_type == crc_code:
         block_of_data = crc.encode_crc(block_of_data)
-    elif code_type == "H":
+    elif code_type == hamming_code:
         block_of_data = hamming.encode_hamming(block_of_data)
     return block_of_data
 
 
 def decode_data(block_of_data: list, code_type: str) -> list:
-    if code_type == "R":
+    if code_type == repetition_code:
         block_of_data = repetition.decode_repetition(block_of_data)
         pass
-    elif code_type == "C":
+    elif code_type == crc_code:
         block_of_data = crc.decode_crc(block_of_data)
         pass
-    elif code_type == "H":
+    elif code_type == hamming_code:
         block_of_data = hamming.decode_hamming(block_of_data)
         pass
     return block_of_data
 
 
 # todo zwraca co się stało tzn. czy wiadomość odebrana była poprawna, czy wykryto błąd, naprawiono błąd itp.
-def sending_data(bits: list, block_size: int, code_type: str, probability: int) -> str:
+def sending_data(bits: list, block_size: int, code_type: str, probability: float) -> dict:
     separated_data = separate_data(bits, block_size)
     data_size = len(separated_data)
     sent_data = []
+    testo = 1
     for block in separated_data:
         sent_data.append(encode_data(block, code_type))
+        print(f"Encode {testo}")
+        testo += 1
+    testo = 1
     for i in range(data_size):
         sent_data[i] = distort_bits(sent_data[i], probability)
+        print(f"Send {testo}")
+        testo += 1
     decoded_data = []
-    # block_results = ["" for x in range(data_size)]
-    # todo data_results
+    data_results = {"Correct": 0, "Fixed": 0, "Repeat": 0, "Wrong": 0}
     # todo stringi jako stałe(zmienne)
     # todo data results + parametry jako csv, symulacja monte carlo
     for i in range(data_size):
+        print(f"Decode {i}")
         while True:
             decoded_data.append(decode_data(sent_data[i], code_type))
-            if (decoded_data[-1])[-1] == "F":
-                # block_results[i] += "F"
-                decoded_data[-1].pop()
-                break
-            elif (decoded_data[-1])[-1] == "R":
-                # block_results[i] += "R"
-                decoded_data[-1].pop()
+            if (decoded_data[i])[-1] == repeat_message:
+                data_results["Repeat"] += 1
+                decoded_data.pop()
+                print(f"Repeat {i}")
             else:
-                # block_results[i] += "C"  # correct
                 break
-    # len(block_results)
-    data_results = {"Correct": 0, "Fixed": 0, "Repeat": 0, "Wrong": 0}
     for i in range(data_size):
-        if separated_data[i] == decoded_data[i]:
-            data_results["Correct"] += 1
-            # todo wtedy jest correct itd dla każdego przypadku
-            pass
-
+        print(f"Check {i}")
+        fixed = False
+        if decoded_data[i][-1] == fixed_message:
+            fixed = True
+            decoded_data[i].pop()
+        if decoded_data[i] == separated_data[i]:
+            if fixed:
+                data_results["Fixed"] += 1
+            else:
+                data_results["Correct"] += 1
+        else:
+            data_results["Wrong"] += 1
     return data_results
