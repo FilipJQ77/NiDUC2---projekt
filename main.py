@@ -23,6 +23,6 @@ import data
 # lista1 = data.decode_data(lista1, "H")
 # data.print_data(lista1)
 
-lista1 = data.generate_random_data(100)
-dictt = data.sending_data(lista1, 5, "C", 0.01)
+lista1 = data.generate_random_data(500)
+dictt = data.sending_data(lista1, 5, "H", 0.05)
 print(dictt)

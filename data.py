@@ -95,33 +95,28 @@ def decode_data(block_of_data: list, code_type: str) -> list:
 def sending_data(bits: list, block_size: int, code_type: str, probability: float) -> dict:
     separated_data = separate_data(bits, block_size)
     data_size = len(separated_data)
-    sent_data = []
-    testo = 1
+    encoded_data = []
     for block in separated_data:
-        sent_data.append(encode_data(block, code_type))
-        print(f"Encode {testo}")
-        testo += 1
-    testo = 1
+        encoded_data.append(encode_data(block, code_type))
+    sent_data = list.copy(encoded_data)
     for i in range(data_size):
         sent_data[i] = distort_bits(sent_data[i], probability)
-        print(f"Send {testo}")
-        testo += 1
     decoded_data = []
     data_results = {"Correct": 0, "Fixed": 0, "Repeat": 0, "Wrong": 0}
     # todo stringi jako stałe(zmienne)
     # todo data results + parametry jako csv, symulacja monte carlo
     for i in range(data_size):
-        print(f"Decode {i}")
+        print(f"Decode {i+1}")
         while True:
             decoded_data.append(decode_data(sent_data[i], code_type))
             if (decoded_data[i])[-1] == repeat_message:
                 data_results["Repeat"] += 1
                 decoded_data.pop()
+                sent_data[i] = distort_bits(encoded_data[i], probability)
                 print(f"Repeat {i}")
             else:
                 break
     for i in range(data_size):
-        print(f"Check {i}")
         fixed = False
         if decoded_data[i][-1] == fixed_message:
             fixed = True
