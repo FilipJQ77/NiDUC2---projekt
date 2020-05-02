@@ -50,7 +50,8 @@ def decode_hamming(bits: list) -> list:
         if summ % 2 != 0:
             wrong_bit_index += index
         index *= 2
-    if wrong_bit_index:
+
+    if 0 < wrong_bit_index <= bits_amount:
         wrong_bit_index -= 1
         if bits[wrong_bit_index]:
             bits[wrong_bit_index] = 0
