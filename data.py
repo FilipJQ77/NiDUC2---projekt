@@ -113,7 +113,7 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: float
                 data_results["Repeat"] += 1
                 decoded_data.pop()
                 sent_data[i] = distort_bits(encoded_data[i], probability)
-                print(f"Repeat {i}")
+                print(f"Repeat {i+1}")
             else:
                 break
     for i in range(data_size):
