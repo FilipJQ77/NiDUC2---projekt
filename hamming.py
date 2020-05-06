@@ -36,7 +36,7 @@ def decode_hamming(bits: list) -> list:
     bits_amount = len(bits)
     index = 1
     wrong_bit_index = 0
-    fixed = ""
+    is_fixed = ""
     while index < bits_amount:
         i = index
         summ = 0
@@ -63,7 +63,7 @@ def decode_hamming(bits: list) -> list:
             summ += bits[i]
         # todo check
         if summ % 2 == bits[-1]:
-            fixed = "F"
+            is_fixed = "F"
         else:
             return ["R"]
     index = 1
@@ -73,6 +73,6 @@ def decode_hamming(bits: list) -> list:
             index *= 2
         else:
             new_bits.append(bits[i])
-    if fixed:
-        new_bits.append(fixed)
+    if is_fixed:
+        new_bits.append(is_fixed)
     return new_bits

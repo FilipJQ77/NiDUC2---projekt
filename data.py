@@ -8,14 +8,40 @@ hamming_code = "H"
 repetition_code = "R"
 fixed_message = "F"
 repeat_message = "R"
+correct = "Correct"
+fixed = "Fixed"
+repeat = "Repeat"
+wrong = "Wrong"
+amount = "Amount"
 
 
 # generates given amount of random data
-def generate_random_data(amount: int) -> list:
+def generate_random_data(data_amount: int) -> list:
     bits = []
-    for i in range(0, amount):
+    for i in range(0, data_amount):
         bits.append(random.randint(0, 1))
     return bits
+
+
+def export_csv(results: dict):
+    pass  # todo
+
+
+def import_csv(filename: str) -> dict:
+    dictt = {correct: 0, fixed: 0, repeat: 0, wrong: 0, amount: 0}  # sth like that
+    # todo bierzesz linijke, amount+=1, dodajesz do odpowiednich pol odpowiednie wartosci
+    return dictt
+
+
+def analyse_data(filename: str):
+    results = import_csv(filename)
+    # tu bedzie kod z metody analyse ktora jest teraz placeholderem
+
+
+def analyse(results: dict):
+    # tylko średnie
+    return [results[correct] / results[amount], results[fixed] / results[amount], results[repeat] / results[amount],
+            results[wrong] / results[amount]]
 
 
 # prints data generated with generate_random_data
@@ -91,7 +117,6 @@ def decode_data(block_of_data: list, code_type: str) -> list:
     return block_of_data
 
 
-# todo zwraca co się stało tzn. czy wiadomość odebrana była poprawna, czy wykryto błąd, naprawiono błąd itp.
 def sending_data(bits: list, block_size: int, code_type: str, probability: float) -> dict:
     separated_data = separate_data(bits, block_size)
     data_size = len(separated_data)
@@ -102,30 +127,30 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: float
     for i in range(data_size):
         sent_data[i] = distort_bits(sent_data[i], probability)
     decoded_data = []
-    data_results = {"Correct": 0, "Fixed": 0, "Repeat": 0, "Wrong": 0}
+    data_results = {correct: 0, fixed: 0, repeat: 0, wrong: 0}
     # todo stringi jako stałe(zmienne)
     # todo data results + parametry jako csv, symulacja monte carlo
     for i in range(data_size):
-        print(f"Decode {i+1}")
+        print(f"Decode {i + 1}")
         while True:
             decoded_data.append(decode_data(sent_data[i], code_type))
             if (decoded_data[i])[-1] == repeat_message:
-                data_results["Repeat"] += 1
+                data_results[repeat] += 1
                 decoded_data.pop()
                 sent_data[i] = distort_bits(encoded_data[i], probability)
-                print(f"Repeat {i+1}")
+                print(f"Repeat {i + 1}")
             else:
                 break
     for i in range(data_size):
-        fixed = False
+        is_fixed = False
         if decoded_data[i][-1] == fixed_message:
-            fixed = True
+            is_fixed = True
             decoded_data[i].pop()
         if decoded_data[i] == separated_data[i]:
-            if fixed:
-                data_results["Fixed"] += 1
+            if is_fixed:
+                data_results[fixed] += 1
             else:
-                data_results["Correct"] += 1
+                data_results[correct] += 1
         else:
-            data_results["Wrong"] += 1
+            data_results[wrong] += 1
     return data_results

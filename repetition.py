@@ -11,7 +11,7 @@ def encode_repetition(bits: list) -> list:
 def decode_repetition(bits: list) -> list:
     index = 1
     summ = 0
-    fixed = ""
+    is_fixed = ""
     new_bits = []
     for bit in bits:
         summ += bit
@@ -20,15 +20,15 @@ def decode_repetition(bits: list) -> list:
             if summ > 2:
                 new_bits.append(1)
                 if summ == 3:
-                    fixed = "F"
+                    is_fixed = "F"
             elif summ < 2:
                 new_bits.append(0)
                 if summ == 1:
-                    fixed = "F"
+                    is_fixed = "F"
             else:
                 return ["R"]
             summ = 0
         index += 1
-    if fixed:
-        new_bits.append(fixed)
+    if is_fixed:
+        new_bits.append(is_fixed)
     return new_bits
