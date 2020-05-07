@@ -25,5 +25,5 @@ fixed = "Fixed"
 repeat = "Repeat"
 wrong = "Wrong"
 amount = "Amount"
-dicto = data_results = {correct: 17, fixed: 3, repeat: 0, wrong: 0, amount: 2}
+dicto = data_results = {correct: [9, 8, 7, 6], fixed: [0, 1, 3, 3], repeat: [0, 1, 3, 2], wrong: [1, 1, 0, 1], amount: 4}
 print(data.analyse(dicto))

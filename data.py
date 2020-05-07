@@ -28,8 +28,9 @@ def export_csv(results: dict):
 
 
 def import_csv(filename: str) -> dict:
-    dictt = {correct: 0, fixed: 0, repeat: 0, wrong: 0, amount: 0}  # sth like that
-    # todo bierzesz linijke, amount+=1, dodajesz do odpowiednich pol odpowiednie wartosci
+    dictt = {correct: [], fixed: [], repeat: [], wrong: [], amount: 0}  # sth like that
+    # todo bierzesz linijke, amount+=1, appendujesz do odpowiedniej listy odpowiednie wartosci
+    # dictt[correct].append(sczytana wartosc)
     return dictt
 
 
@@ -40,8 +41,8 @@ def analyse_data(filename: str):
 
 def analyse(results: dict):
     # tylko średnie
-    return [results[correct] / results[amount], results[fixed] / results[amount], results[repeat] / results[amount],
-            results[wrong] / results[amount]]
+    return [sum(results[correct]) / results[amount], sum(results[fixed]) / results[amount],
+            sum(results[repeat]) / results[amount], sum(results[wrong]) / results[amount]]
 
 
 # prints data generated with generate_random_data
