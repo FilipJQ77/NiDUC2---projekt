@@ -1,5 +1,3 @@
-import random
-# import time
 import data
 
 lista1 = data.generate_random_data(60)
@@ -20,10 +18,13 @@ lista1 = data.generate_random_data(60)
 # dict2 = data.sending_data(lista1, 6, "H", 0.03)
 # print(dict1)
 # print(dict2)
+
 correct = "Correct"
 fixed = "Fixed"
 repeat = "Repeat"
 wrong = "Wrong"
-amount = "Amount"
-dicto = data_results = {correct: [9, 8, 7, 6], fixed: [0, 1, 3, 3], repeat: [0, 1, 3, 2], wrong: [1, 1, 0, 1], amount: 4}
-print(data.analyse(dicto))
+dicto = data_results = {correct: [9, 8, 7, 6, 0, 9, 9, 8],
+                        fixed: [0, 1, 3, 3, 7, 0, 1, 1],
+                        repeat: [0, 1, 3, 2, 2, 2, 4, 5],
+                        wrong: [1, 1, 0, 1, 3, 1, 0, 1]}
+data.analyse(dicto)

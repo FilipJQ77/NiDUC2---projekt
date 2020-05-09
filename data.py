@@ -1,4 +1,6 @@
 import random
+import statistics
+import matplotlib.pyplot as plt
 import crc
 import hamming
 import repetition
@@ -28,8 +30,8 @@ def export_csv(results: dict):
 
 
 def import_csv(filename: str) -> dict:
-    dictt = {correct: [], fixed: [], repeat: [], wrong: [], amount: 0}  # sth like that
-    # todo bierzesz linijke, amount+=1, appendujesz do odpowiedniej listy odpowiednie wartosci
+    dictt = {correct: [], fixed: [], repeat: [], wrong: []}  # sth like that
+    # todo bierzesz linijke, appendujesz do odpowiedniej listy odpowiednie wartosci
     # dictt[correct].append(sczytana wartosc)
     return dictt
 
@@ -40,9 +42,22 @@ def analyse_data(filename: str):
 
 
 def analyse(results: dict):
-    # tylko średnie
-    return [sum(results[correct]) / results[amount], sum(results[fixed]) / results[amount],
-            sum(results[repeat]) / results[amount], sum(results[wrong]) / results[amount]]
+    for desc, result in results.items():  # desc = key, result = item
+        mode = statistics.mode(result)
+        average = statistics.mean(result)
+        print(f"{desc}: Average = {average}")
+        standard_deviation = statistics.stdev(result)
+        print(f"{desc}: Standard deviation = {standard_deviation}")
+        quartiles = statistics.quantiles(result, method='inclusive')
+        print(f"{desc}: Quartiles = {quartiles}")
+        iqr = quartiles[2] - quartiles[0]
+        q0 = quartiles[0] - 1.5 * iqr
+        q4 = quartiles[2] + 1.5 * iqr
+        skewness_mode = (average - mode) / standard_deviation
+        skewness_median = 3 * (average - quartiles[1]) / standard_deviation
+        print(f"{desc}: Pearson skewness (mode) = {skewness_mode}")
+        print(f"{desc}: Pearson skewness (median) = {skewness_median}")
+        plt.boxplot(quartiles)
 
 
 # prints data generated with generate_random_data
