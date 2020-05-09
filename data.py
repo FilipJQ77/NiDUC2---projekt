@@ -25,14 +25,14 @@ def generate_random_data(data_amount: int) -> list:
     return bits
 
 
-def export_csv(results: dict):
+def export_csv(filename: str, results: dict):
     pass  # todo
 
 
 def import_csv(filename: str) -> dict:
-    dictt = {correct: [], fixed: [], repeat: [], wrong: []}  # sth like that
+    dictt = {correct: [], fixed: [], repeat: [], wrong: []}
     # todo bierzesz linijke, appendujesz do odpowiedniej listy odpowiednie wartosci
-    # dictt[correct].append(sczytana wartosc)
+    # dictt[correct].append(sczytana wartosc) etc
     return dictt
 
 
@@ -57,7 +57,12 @@ def analyse(results: dict):
         skewness_median = 3 * (average - quartiles[1]) / standard_deviation
         print(f"{desc}: Pearson skewness (mode) = {skewness_mode}")
         print(f"{desc}: Pearson skewness (median) = {skewness_median}")
-        plt.boxplot(quartiles)
+        plt.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4])  # boxplot
+        plt.waitforbuttonpress()  # todo raczej mozna lepiej
+        plt.clf()
+        plt.hist(result, bins=100)  # histogram
+        plt.waitforbuttonpress()
+        plt.clf()
 
 
 # prints data generated with generate_random_data
@@ -90,7 +95,7 @@ def separate_data(bits: list, n: int) -> list:
     return complete_data
 
 
-# basic distortion of a single bit, probability is in range [0,100]
+# basic distortion of data, probability (of distorting a bit) is in range [0, 1]
 def distort_bit(bit: int, probability: float) -> int:
     rand = random.uniform(0, 1)
     if rand < probability:
@@ -101,7 +106,7 @@ def distort_bit(bit: int, probability: float) -> int:
     return bit
 
 
-# basic distortion of data, probability is in range [0,100] todo pomyśleć nad innymi implementacjami
+# basic distortion of data, probability (of distorting a bit) is in range [0, 1]
 def distort_bits(bits: list, probability: float) -> list:
     size = len(bits)
     for i in range(0, size):
@@ -144,8 +149,6 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: float
         sent_data[i] = distort_bits(sent_data[i], probability)
     decoded_data = []
     data_results = {correct: 0, fixed: 0, repeat: 0, wrong: 0}
-    # todo stringi jako stałe(zmienne)
-    # todo data results + parametry jako csv, symulacja monte carlo
     for i in range(data_size):
         print(f"Decode {i + 1}")
         while True:
@@ -169,4 +172,7 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: float
                 data_results[correct] += 1
         else:
             data_results[wrong] += 1
+    # todo parametry symulacji jako nazwa .csv
+    # np filename=block_size+probabilty etc
+    export_csv()
     return data_results

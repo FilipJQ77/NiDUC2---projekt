@@ -1,4 +1,5 @@
 import data
+import random
 
 lista1 = data.generate_random_data(60)
 
@@ -23,8 +24,12 @@ correct = "Correct"
 fixed = "Fixed"
 repeat = "Repeat"
 wrong = "Wrong"
-dicto = data_results = {correct: [9, 8, 7, 6, 0, 9, 9, 8],
-                        fixed: [0, 1, 3, 3, 7, 0, 1, 1],
-                        repeat: [0, 1, 3, 2, 2, 2, 4, 5],
-                        wrong: [1, 1, 0, 1, 3, 1, 0, 1]}
+# dicto = {correct: [9, 8, 7, 6, 0, 9, 9, 8],
+#          fixed: [0, 1, 3, 3, 7, 0, 1, 1],
+#          repeat: [0, 1, 3, 2, 2, 2, 4, 5],
+#          wrong: [1, 1, 0, 1, 3, 1, 0, 1]}
+dicto = {correct: []}
+for i in range(100000):
+    x = int(random.triangular(0, 1000, 750))
+    dicto[correct].append(x)
 data.analyse(dicto)
