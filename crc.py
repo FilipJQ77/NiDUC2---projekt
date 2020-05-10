@@ -29,7 +29,7 @@ def decode_crc(bits: list) -> list:
     summ = 0
     for i in range(len_divisor):
         summ += bits_temp[bits_amount - 1 - i]
-    print(bits_temp)
+    
     if summ == 0:
         return bits[:-(len_divisor - 1)]
     elif summ == 1:
@@ -37,26 +37,4 @@ def decode_crc(bits: list) -> list:
         new_bits.append("F")
         return new_bits
     else:
-        return repair_crc(bits)
-
-
-def repair_crc(broken: list) -> list:
-    broken_1 = list.copy(broken)
-    broken_2 = list.copy(broken)
-    len_broken = len(broken)
-    rotations = 0
-    while rotations < len_broken - 1:
-        broken_1 = broken_1[1:] + broken_1[:1]
-        rotations += 1
-        for i in range(len_broken - len_divisor + 1):
-            if broken_1[i] == 1:
-                for j in range(len_divisor):
-                    broken_2[i + j] = int(np.logical_xor(broken_1[i + j], divisor[j]))
-        print(broken_2, rotations)
-        test = sum(broken_2)
-        if test == 1:
-            for i in range(len_broken):
-                broken_1[i] += broken_2[i]
-            broken_1 = broken_1[-rotations:] + broken_1[:-rotations]
-            return broken_1
-    return ["R"]
+        return ["R"]
