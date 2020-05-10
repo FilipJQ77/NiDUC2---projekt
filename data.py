@@ -1,9 +1,11 @@
 import random
 import statistics
 import matplotlib.pyplot as plt
+import csv
 import crc
 import hamming
 import repetition
+
 
 crc_code = "C"
 hamming_code = "H"
@@ -23,17 +25,6 @@ def generate_random_data(data_amount: int) -> list:
     for i in range(0, data_amount):
         bits.append(random.randint(0, 1))
     return bits
-
-
-def export_csv(filename: str, results: dict):
-    pass  # todo
-
-
-def import_csv(filename: str) -> dict:
-    dictt = {correct: [], fixed: [], repeat: [], wrong: []}
-    # todo bierzesz linijke, appendujesz do odpowiedniej listy odpowiednie wartosci
-    # dictt[correct].append(sczytana wartosc) etc
-    return dictt
 
 
 def analyse_data(filename: str):
@@ -172,7 +163,30 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: float
                 data_results[correct] += 1
         else:
             data_results[wrong] += 1
-    # todo parametry symulacji jako nazwa .csv
+    # todo parametry symulacji jako nazwa .csv kod + dł. wiadomości + dł. pakietu + pr. przekłamania + .csv
+    filename = str(code_type) + "_" + str(len(bits)) + "_" + str(block_size) + "_" + str(probability) + ".csv"
     # np filename=block_size+probabilty etc
-    export_csv()
+    export_csv(filename, data_results)
     return data_results
+
+
+def export_csv(filename: str, results: dict):
+    with open(filename, 'a', newline='') as csvfile:
+        filewriter = csv.writer(csvfile, delimiter=';')
+        filewriter.writerow([results[correct], results[fixed], results[repeat], results[wrong]])
+
+
+def import_csv(filename: str) -> dict:
+    dictt = {correct: [], fixed: [], repeat: [], wrong: []}
+    # todo bierzesz linijke, appendujesz do odpowiedniej listy odpowiednie wartosci
+    # dictt[correct].append(sczytana wartosc) etc
+    with open(filename, 'rt') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            dictt[correct].append(row[0])
+            dictt[fixed].append(row[1])
+            dictt[repeat].append(row[2])
+            dictt[wrong].append(row[3])
+    return dictt
+
+
