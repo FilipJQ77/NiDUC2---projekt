@@ -1,3 +1,4 @@
+import math
 import random
 import statistics
 import matplotlib.pyplot as plt
@@ -5,7 +6,6 @@ import csv
 import crc
 import hamming
 import repetition
-
 
 crc_code = "C"
 hamming_code = "H"
@@ -30,6 +30,7 @@ def generate_random_data(data_amount: int) -> list:
 def analyse_data(filename: str):
     results = import_csv(filename)
     # tu bedzie kod z metody analyse ktora jest teraz placeholderem
+    analyse(results)
 
 
 def analyse(results: dict):
@@ -44,12 +45,15 @@ def analyse(results: dict):
         iqr = quartiles[2] - quartiles[0]
         q0 = quartiles[0] - 1.5 * iqr
         q4 = quartiles[2] + 1.5 * iqr
-        skewness_mode = (average - mode) / standard_deviation
-        skewness_median = 3 * (average - quartiles[1]) / standard_deviation
-        print(f"{desc}: Pearson skewness (mode) = {skewness_mode}")
-        print(f"{desc}: Pearson skewness (median) = {skewness_median}")
+        if standard_deviation:
+            skewness_mode = (average - mode) / standard_deviation
+            skewness_median = 3 * (average - quartiles[1]) / standard_deviation
+            print(f"{desc}: Pearson skewness (mode) = {skewness_mode}")
+            print(f"{desc}: Pearson skewness (median) = {skewness_median}")
+        else:
+            print(f"Skewness = 0")  # todo czy na pewno?
         plt.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4])  # boxplot
-        plt.waitforbuttonpress()  # todo raczej mozna lepiej
+        plt.waitforbuttonpress()  # todo
         plt.clf()
         plt.hist(result, bins=100)  # histogram
         plt.waitforbuttonpress()
@@ -129,6 +133,24 @@ def decode_data(block_of_data: list, code_type: str) -> list:
     return block_of_data
 
 
+def export_csv(filename: str, results: dict):
+    with open(filename, 'a', newline='') as file:
+        csvwriter = csv.DictWriter(file, results.keys())
+        csvwriter.writerow(results)
+
+
+def import_csv(filename: str) -> dict:
+    data_to_analyse = {correct: [], fixed: [], repeat: [], wrong: []}
+    with open(filename, 'r') as file:
+        csvreader = csv.DictReader(file, fieldnames=data_to_analyse.keys())
+        for row in csvreader:
+            data_to_analyse[correct].append(int(row[correct]))
+            data_to_analyse[fixed].append(int(row[fixed]))
+            data_to_analyse[repeat].append(int(row[repeat]))
+            data_to_analyse[wrong].append(int(row[wrong]))
+    return data_to_analyse
+
+
 def sending_data(bits: list, block_size: int, code_type: str, probability: float) -> dict:
     separated_data = separate_data(bits, block_size)
     data_size = len(separated_data)
@@ -163,31 +185,6 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: float
                 data_results[correct] += 1
         else:
             data_results[wrong] += 1
-    # todo parametry symulacji jako nazwa .csv kod + dł. wiadomości + dł. pakietu + pr. przekłamania + .csv
-    filename = str(code_type) + "_" + str(len(bits)) + "_" + str(block_size) + "_" + str(probability) + ".csv"
-    # np filename=block_size+probabilty etc
+    filename = f"{code_type}_{len(bits)}_{block_size}_{probability}.csv"
     export_csv(filename, data_results)
     return data_results
-
-
-def export_csv(filename: str, results: dict):
-    with open(filename, 'a', newline='') as csvfile:
-        filewriter = csv.writer(csvfile, delimiter=';')
-        filewriter.writerow([results[correct], results[fixed], results[repeat], results[wrong]])
-
-
-def import_csv(filename: str) -> dict:
-    dictt = {correct: [], fixed: [], repeat: [], wrong: []}
-    # todo bierzesz linijke, appendujesz do odpowiedniej listy odpowiednie wartosci
-    # dictt[correct].append(sczytana wartosc) etc
-    with open(filename, 'rt') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            splt = row[0].split(";")
-            dictt[correct].append(int(splt[0]))
-            dictt[fixed].append(int(splt[1]))
-            dictt[repeat].append(int(splt[2]))
-            dictt[wrong].append(int(splt[3]))
-    return dictt
-
-

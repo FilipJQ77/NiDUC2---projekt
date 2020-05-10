@@ -1,5 +1,10 @@
 import data
 import random
+
+crc_code = "C"
+hamming_code = "H"
+repetition_code = "R"
+
 #
 # lista1 = data.generate_random_data(60)
 #
@@ -24,19 +29,19 @@ correct = "Correct"
 fixed = "Fixed"
 repeat = "Repeat"
 wrong = "Wrong"
-dicto = {correct: [9, 8, 7, 6, 0, 9, 9, 8],
-         fixed: [0, 1, 3, 3, 7, 0, 1, 1],
-         repeat: [0, 1, 3, 2, 2, 2, 4, 5],
-         wrong: [1, 1, 0, 1, 3, 1, 0, 1]}
-dicto = {correct: []}
-for i in range(100000):
-    x = int(random.triangular(0, 1000, 750))
-    dicto[correct].append(x)
-data.analyse(dicto)
-#
-# test = {correct: 1, fixed: 2, repeat: 3, wrong: 4}
-# data.export_csv('test.csv', test)
-# # test = {correct: 5, fixed: 6, repeat: 7, wrong: 8}
-# data.export_csv('test.csv', test)
-# test2 = data.import_csv('test.csv')
-# data.analyse(test2)
+
+# dicto = {correct: [9, 8, 7, 6, 0, 9, 9, 8],
+#          fixed: [0, 1, 3, 3, 7, 0, 1, 1],
+#          repeat: [0, 1, 3, 2, 2, 2, 4, 5],
+#          wrong: [1, 1, 0, 1, 3, 1, 0, 1]}
+# dicto = {correct: []}
+# for i in range(100000):
+#     x = int(random.triangular(0, 1000, 750))
+#     dicto[correct].append(x)
+# data.analyse(dicto)
+
+# for i in range(10):
+#     lista = data.generate_random_data(400)
+#     data.sending_data(lista, 4, hamming_code, 0.01)
+
+data.analyse_data("H_400_4_0.01.csv")
