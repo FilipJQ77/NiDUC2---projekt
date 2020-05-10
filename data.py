@@ -183,10 +183,11 @@ def import_csv(filename: str) -> dict:
     with open(filename, 'rt') as file:
         reader = csv.reader(file)
         for row in reader:
-            dictt[correct].append(row[0])
-            dictt[fixed].append(row[1])
-            dictt[repeat].append(row[2])
-            dictt[wrong].append(row[3])
+            splt = row[0].split(";")
+            dictt[correct].append(int(splt[0]))
+            dictt[fixed].append(int(splt[1]))
+            dictt[repeat].append(int(splt[2]))
+            dictt[wrong].append(int(splt[3]))
     return dictt
 
 
