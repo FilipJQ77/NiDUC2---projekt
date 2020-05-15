@@ -55,7 +55,8 @@ def analyse(results: dict):
         plt.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4])  # boxplot
         plt.waitforbuttonpress()  # todo
         plt.clf()
-        plt.hist(result, bins=100)  # histogram
+        # A simple method to work out how many bins are suitable is to take the square root of the total number of values in your distribution?
+        counts, bins, bars = plt.hist(result, bins=100)  # histogram
         plt.waitforbuttonpress()
         plt.clf()
 
