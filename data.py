@@ -27,7 +27,7 @@ def generate_random_data(data_amount: int) -> list:
     return bits
 
 
-def analyse_data(filename: object) -> object:
+def analyse_data(filename: str):
     results = import_csv(filename)
     # tu bedzie kod z metody analyse ktora jest teraz placeholderem
     analyse(results)
