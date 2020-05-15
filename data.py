@@ -2,6 +2,7 @@ import math
 import random
 import statistics
 import matplotlib.pyplot as plt
+import scipy.optimize as opt
 import csv
 import crc
 import hamming
@@ -17,6 +18,11 @@ fixed = "Fixed"
 repeat = "Repeat"
 wrong = "Wrong"
 amount = "Amount"
+
+
+# todo testowa funkcja do wyznaczania parametrów
+def func(x, a, b):
+    return a * x + b
 
 
 # generates given amount of random data
@@ -57,6 +63,15 @@ def analyse(results: dict):
         plt.clf()
         # A simple method to work out how many bins are suitable is to take the square root of the total number of values in your distribution?
         counts, bins, bars = plt.hist(result, bins=100)  # histogram
+        x_data = []
+        for i in range(len(bins) - 1):
+            x_data.append((bins[i] + bins[i + 1]) / 2)
+        y_data = counts
+        plt.waitforbuttonpress()
+        plt.plot(x_data, y_data, 'r', label="Histogram function")
+        params, params_covariance = opt.curve_fit(func, x_data, y_data)
+        print(params)
+        # plt.plot(x_data, func(x_data, params[0], params[1]), label="Fitted function") todo
         plt.waitforbuttonpress()
         plt.clf()
 

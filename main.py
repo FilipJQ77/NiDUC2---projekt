@@ -45,21 +45,22 @@ def menu():
             analyse()
         elif answer == "0":
             answer = None
-        else:
-            print("Niepoprawna opcja")
 
 
+# data.test_curve_fitting()
 menu()
 
 correct = "Correct"
 fixed = "Fixed"
 repeat = "Repeat"
 wrong = "Wrong"
-
-dicto = {correct: [9, 8, 7, 6, 0, 9, 9, 8],
-         fixed: [0, 1, 3, 3, 7, 0, 1, 1],
-         repeat: [0, 1, 3, 2, 2, 2, 4, 5],
-         wrong: [1, 1, 0, 1, 3, 1, 0, 1]}
+#
+# dicto = {correct: [9, 8, 7, 6, 0, 9, 9, 8, 10],
+#          fixed: [0, 1, 3, 3, 7, 0, 1, 1, 0],
+#          repeat: [0, 1, 3, 2, 2, 2, 4, 5, 1],
+#          wrong: [1, 1, 0, 1, 3, 1, 0, 1, 0]}
+dicto = {correct: []}
+for i in range(100):
+    for j in range(i + 1):
+        dicto[correct].append(i + 1)
 data.analyse(dicto)
-
-# data.analyse_data("H_400_4_0.01.csv")
