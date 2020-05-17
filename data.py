@@ -40,13 +40,13 @@ def analyse_data(filename: str):
 
 
 def analyse(results: dict):
-    for desc, result in results.items():  # desc = key, result = item
-        mode = statistics.mode(result)
-        average = statistics.mean(result)
+    for desc, result_list in results.items():  # desc = key, result_list = item
+        mode = statistics.mode(result_list)
+        average = statistics.mean(result_list)
         print(f"{desc}: Average = {average}")
-        standard_deviation = statistics.stdev(result)
+        standard_deviation = statistics.stdev(result_list)
         print(f"{desc}: Standard deviation = {standard_deviation}")
-        quartiles = statistics.quantiles(result, method='inclusive')
+        quartiles = statistics.quantiles(result_list, method='inclusive')
         print(f"{desc}: Quartiles = {quartiles}")
         iqr = quartiles[2] - quartiles[0]
         q0 = quartiles[0] - 1.5 * iqr
@@ -62,12 +62,22 @@ def analyse(results: dict):
         plt.waitforbuttonpress()  # todo
         plt.clf()
         # A simple method to work out how many bins are suitable is to take the square root of the total number of values in your distribution?
-        counts, bins, bars = plt.hist(result, bins=100)  # histogram
+        bins_amount = 100
+        counts = []
+        bins = []
+        bars = []
+        while True:
+            counts, bins, bars = plt.hist(result_list, bins=bins_amount)  # histogram
+            plt.waitforbuttonpress()
+            bins_amount = int(input("Podaj nową liczbę przedziałów histogramu, lub 0 jeśli jest ok\n"))
+            if bins_amount:
+                plt.clf()
+            else:
+                break
         x_data = []
         for i in range(len(bins) - 1):
             x_data.append((bins[i] + bins[i + 1]) / 2)
         y_data = counts
-        plt.waitforbuttonpress()
         plt.plot(x_data, y_data, 'r', label="Histogram function")
         params, params_covariance = opt.curve_fit(func, x_data, y_data)
         print(params)

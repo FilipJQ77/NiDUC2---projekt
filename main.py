@@ -37,8 +37,7 @@ def analyse():
 def menu():
     answer = True
     while answer:
-        print("1. Eksport\n2. Analiza\n0. Wyjście")
-        answer = input()
+        answer = input("1. Eksport\n2. Analiza\n0. Wyjście\n")
         if answer == "1":
             export()
         elif answer == "2":
