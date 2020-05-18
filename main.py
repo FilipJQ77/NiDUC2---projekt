@@ -17,9 +17,10 @@ def get_data_from_user() -> tuple:
 
 
 def export():
-    code_type = True
-    while code_type:
+    while True:
         code_type, bits_amount, block_size, prob = get_data_from_user()
+        if code_type == "":
+            break
         attempts = int(input("Ile prób wykonać?: "))
         for i in range(attempts):
             listt = data.generate_random_data(bits_amount)
@@ -27,9 +28,10 @@ def export():
 
 
 def analyse():
-    code_type = True
-    while code_type:
+    while True:
         code_type, bits_amount, block_size, prob = get_data_from_user()
+        if code_type == "":
+            break
         filename = f"{code_type}_{bits_amount}_{block_size}_{prob}.csv"
         data.analyse_data(filename)
 
@@ -46,20 +48,4 @@ def menu():
             answer = None
 
 
-# data.test_curve_fitting()
 menu()
-
-correct = "Correct"
-fixed = "Fixed"
-repeat = "Repeat"
-wrong = "Wrong"
-#
-# dicto = {correct: [9, 8, 7, 6, 0, 9, 9, 8, 10],
-#          fixed: [0, 1, 3, 3, 7, 0, 1, 1, 0],
-#          repeat: [0, 1, 3, 2, 2, 2, 4, 5, 1],
-#          wrong: [1, 1, 0, 1, 3, 1, 0, 1, 0]}
-dicto = {correct: []}
-for i in range(100):
-    for j in range(i + 1):
-        dicto[correct].append(i + 1)
-data.analyse(dicto)

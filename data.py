@@ -1,6 +1,7 @@
 import math
 import random
 import statistics
+import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as opt
 import csv
@@ -20,9 +21,8 @@ wrong = "Wrong"
 amount = "Amount"
 
 
-# todo testowa funkcja do wyznaczania parametrów
-def func(x, a, b):
-    return a * x + b
+def gauss_function(x, a, mu, sigma):
+    return a * math.e ** ((-1 / 2) * (((x - mu) / sigma) ** 2))
 
 
 # generates given amount of random data
@@ -62,26 +62,17 @@ def analyse(results: dict):
         plt.waitforbuttonpress()  # todo
         plt.clf()
         # A simple method to work out how many bins are suitable is to take the square root of the total number of values in your distribution?
-        bins_amount = 100
-        counts = []
-        bins = []
-        bars = []
-        while True:
-            counts, bins, bars = plt.hist(result_list, bins=bins_amount)  # histogram
-            plt.waitforbuttonpress()
-            bins_amount = int(input("Podaj nową liczbę przedziałów histogramu, lub 0 jeśli jest ok\n"))
-            if bins_amount:
-                plt.clf()
-            else:
-                break
+        counts, bins, bars = plt.hist(result_list,
+                                      bins=np.arange(min(result_list), max(result_list) + 1, 1))  # histogram
+        plt.waitforbuttonpress()
         x_data = []
         for i in range(len(bins) - 1):
             x_data.append((bins[i] + bins[i + 1]) / 2)
         y_data = counts
-        plt.plot(x_data, y_data, 'r', label="Histogram function")
-        params, params_covariance = opt.curve_fit(func, x_data, y_data)
-        print(params)
-        # plt.plot(x_data, func(x_data, params[0], params[1]), label="Fitted function") todo
+        # plt.plot(x_data, y_data, 'r', label="Histogram function")
+        params, params_covariance = opt.curve_fit(gauss_function, x_data, y_data)
+        print(f"Gauss parameters: {params}")
+        plt.plot(x_data, gauss_function(x_data, params[0], params[1], params[2]), label="Fitted function")
         plt.waitforbuttonpress()
         plt.clf()
 
@@ -189,14 +180,12 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: float
     decoded_data = []
     data_results = {correct: 0, fixed: 0, repeat: 0, wrong: 0}
     for i in range(data_size):
-        print(f"Decode {i + 1}")
         while True:
             decoded_data.append(decode_data(sent_data[i], code_type))
             if (decoded_data[i])[-1] == repeat_message:
                 data_results[repeat] += 1
                 decoded_data.pop()
                 sent_data[i] = distort_bits(encoded_data[i], probability)
-                print(f"Repeat {i + 1}")
             else:
                 break
     for i in range(data_size):
