@@ -35,7 +35,6 @@ def generate_random_data(data_amount: int) -> list:
 
 def analyse_data(filename: str):
     results = import_csv(filename)
-    # tu bedzie kod z metody analyse ktora jest teraz placeholderem
     analyse(results)
 
 
@@ -57,20 +56,19 @@ def analyse(results: dict):
             print(f"{desc}: Pearson skewness (mode) = {skewness_mode}")
             print(f"{desc}: Pearson skewness (median) = {skewness_median}")
         else:
-            print(f"Skewness = 0")  # todo czy na pewno?
+            print(f"Skewness = 0")
         plt.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4])  # boxplot
-        plt.waitforbuttonpress()  # todo
+        plt.waitforbuttonpress()
         plt.clf()
-        # A simple method to work out how many bins are suitable is to take the square root of the total number of values in your distribution?
-        counts, bins, bars = plt.hist(result_list,
-                                      bins=np.arange(min(result_list), max(result_list) + 1, 1))  # histogram
+        # counts, bins, bars = plt.hist(result_list, bins=np.arange(min(result_list), max(result_list) + 1, 1))  # histogram
+        counts, bins, bars = plt.hist(result_list, bins=20)  # histogram
+        # todo osie wykresu, boxplot nad histogramem
         plt.waitforbuttonpress()
         x_data = []
         for i in range(len(bins) - 1):
             x_data.append((bins[i] + bins[i + 1]) / 2)
         y_data = counts
-        # plt.plot(x_data, y_data, 'r', label="Histogram function")
-        params, params_covariance = opt.curve_fit(gauss_function, x_data, y_data)
+        params, params_cov = opt.curve_fit(gauss_function, x_data, y_data, p0=[max(y_data), quartiles[1], iqr / 1.3490])
         print(f"Gauss parameters: {params}")
         plt.plot(x_data, gauss_function(x_data, params[0], params[1], params[2]), label="Fitted function")
         plt.waitforbuttonpress()
