@@ -1,10 +1,12 @@
 import numpy as np
 
+# The divisor to be used in encoding and decoding in Cyclic Repetition Code.
 divisor = [1, 0, 0, 1, 0, 1]
 len_divisor = len(divisor)
 
 
 def encode_crc(bits: list) -> list:
+    """Encodes a given list of bits with CRC."""
     new_bits = list.copy(bits)
     bits_temp = list.copy(bits)
     for i in range(len_divisor - 1):
@@ -20,6 +22,7 @@ def encode_crc(bits: list) -> list:
 
 
 def decode_crc(bits: list) -> list:
+    """Decodes a given list of bits with CRC."""
     bits_temp = list.copy(bits)
     bits_amount = len(bits)
     for i in range(bits_amount - len_divisor + 1):
@@ -29,7 +32,7 @@ def decode_crc(bits: list) -> list:
     summ = 0
     for i in range(len_divisor):
         summ += bits_temp[bits_amount - 1 - i]
-    
+
     if summ == 0:
         return bits[:-(len_divisor - 1)]
     elif summ == 1:

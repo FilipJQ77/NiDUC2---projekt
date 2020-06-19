@@ -5,9 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as opt
 import csv
-import crc
-import hamming
-import repetition
+from src import repetition, crc, hamming
 
 crc_code = "C"
 hamming_code = "H"
@@ -22,11 +20,12 @@ amount = "Amount"
 
 
 def gauss_function(x, a, mu, sigma):
+    """Gauss function used in curve fitting."""
     return a * math.e ** ((-1 / 2) * (((x - mu) / sigma) ** 2))
 
 
-# generates given amount of random data
 def generate_random_data(data_amount: int) -> list:
+    """Generates given amount of random bits."""
     bits = []
     for i in range(0, data_amount):
         bits.append(random.randint(0, 1))
@@ -34,11 +33,26 @@ def generate_random_data(data_amount: int) -> list:
 
 
 def analyse_data(filename: str):
+    """Analyses sending data test results from given file."""
     results = import_csv(filename)
     analyse(results)
 
 
+# todo zaaplikować do analyse
+def analyse_test():
+    xdata = ["2048", "4096", "", "8192"]
+    ydata = [0.000146, 0.000311, None, 0.000605]
+    fig = plt.figure()
+    ax1 = fig.add_subplot()
+    ax1.set_ylabel("Średni czas [s]")
+    ax1.set_xlabel("Liczba liczb")
+    ax1.plot(xdata, ydata, ".")
+    plt.show()
+    plt.waitforbuttonpress()
+
+
 def analyse(results: dict):
+    """Analyses sending data test results in form of a dictionary of lists."""
     for desc, result_list in results.items():  # desc = key, result_list = item
         mode = statistics.mode(result_list)
         average = statistics.mean(result_list)
@@ -60,31 +74,32 @@ def analyse(results: dict):
         plt.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4])  # boxplot
         plt.waitforbuttonpress()
         plt.clf()
-        # counts, bins, bars = plt.hist(result_list, bins=np.arange(min(result_list), max(result_list) + 1, 1))  # histogram
-        counts, bins, bars = plt.hist(result_list, bins=20)  # histogram
+        counts, bins, bars = plt.hist(result_list,
+                                      bins=np.arange(min(result_list), max(result_list) + 1, 1))  # histogram
+        # counts, bins, bars = plt.hist(result_list, bins=20)  # histogram
         # todo osie wykresu, boxplot nad histogramem
         plt.waitforbuttonpress()
         x_data = []
         for i in range(len(bins) - 1):
             x_data.append((bins[i] + bins[i + 1]) / 2)
         y_data = counts
-        params, params_cov = opt.curve_fit(gauss_function, x_data, y_data, p0=[max(y_data), quartiles[1], iqr / 1.3490])
-        print(f"Gauss parameters: {params}")
+        params, params_cov = opt.curve_fit(gauss_function, x_data, y_data, p0=[max(y_data), quartiles[1], iqr / 1.349])
+        print(f"{desc} gauss parameters: {params}")
         plt.plot(x_data, gauss_function(x_data, params[0], params[1], params[2]), label="Fitted function")
         plt.waitforbuttonpress()
         plt.clf()
 
 
-# prints data generated with generate_random_data
 def print_data(bits: list):
+    """Prints data generated with generate_random_data."""
     print(f"Data of a list with id: {id(bits)}: [", end='')
     for bit in bits:
         print(bit, end='')
     print("]")
 
 
-# separates data into blocks of size n, returns a list of lists, where each inside list is a block of data
 def separate_data(bits: list, n: int) -> list:
+    """Separates data into blocks of size 'n', returns a list of lists, where each internal list is a block of data."""
     i = 0
     complete_data = []
     block_of_data = []
@@ -95,8 +110,8 @@ def separate_data(bits: list, n: int) -> list:
             i = 0
             complete_data.append(block_of_data)
             block_of_data = []
-
-    # if we still have some data which wasn't added, we fill it with 0s until it has a size of n
+    # if after separating data into blocks we still have some data which wasn't added,
+    # we fill it with 0s until it has a size of n
     if block_of_data:
         length = len(block_of_data)
         for i in range(length, n):
@@ -105,8 +120,8 @@ def separate_data(bits: list, n: int) -> list:
     return complete_data
 
 
-# basic distortion of data, probability (of distorting a bit) is in range [0, 1]
 def distort_bit(bit: int, probability: float) -> int:
+    """Basic distortion of a bit with probability is in range [0, 1]."""
     rand = random.uniform(0, 1)
     if rand < probability:
         if bit == 0:
@@ -116,16 +131,15 @@ def distort_bit(bit: int, probability: float) -> int:
     return bit
 
 
-# basic distortion of data, probability (of distorting a bit) is in range [0, 1]
 def distort_bits(bits: list, probability: float) -> list:
-    size = len(bits)
-    for i in range(0, size):
+    """Basic distortion of data, where each bit can be distorted with a probability in range [0, 1]."""
+    for i in range(len(bits)):
         bits[i] = distort_bit(bits[i], probability)
     return bits
 
 
-# encodes a block of data with a given type of code
 def encode_data(block_of_data: list, code_type: str) -> list:
+    """Encodes a block of data with a given code type."""
     if code_type == repetition_code:
         block_of_data = repetition.encode_repetition(block_of_data)
     elif code_type == crc_code:
@@ -136,6 +150,7 @@ def encode_data(block_of_data: list, code_type: str) -> list:
 
 
 def decode_data(block_of_data: list, code_type: str) -> list:
+    """Decodes a block of data with a given code type."""
     if code_type == repetition_code:
         block_of_data = repetition.decode_repetition(block_of_data)
         pass
@@ -149,12 +164,15 @@ def decode_data(block_of_data: list, code_type: str) -> list:
 
 
 def export_csv(filename: str, results: dict):
+    """Exports a dictionary of sending data test results to a corresponding csv file."""
     with open(filename, 'a', newline='') as file:
         csvwriter = csv.DictWriter(file, results.keys())
         csvwriter.writerow(results)
 
 
 def import_csv(filename: str) -> dict:
+    """Imports test results from a given csv file, and returns a dictionary of lists,
+    where each list is a list of test results."""
     data_to_analyse = {correct: [], fixed: [], repeat: [], wrong: []}
     with open(filename, 'r') as file:
         csvreader = csv.DictReader(file, fieldnames=data_to_analyse.keys())
@@ -167,6 +185,7 @@ def import_csv(filename: str) -> dict:
 
 
 def sending_data(bits: list, block_size: int, code_type: str, probability: float) -> dict:
+    """Simulates sending data, returns a dictionary of the results."""
     separated_data = separate_data(bits, block_size)
     data_size = len(separated_data)
     encoded_data = []
@@ -198,6 +217,4 @@ def sending_data(bits: list, block_size: int, code_type: str, probability: float
                 data_results[correct] += 1
         else:
             data_results[wrong] += 1
-    filename = f"{code_type}_{len(bits)}_{block_size}_{probability}.csv"
-    export_csv(filename, data_results)
     return data_results

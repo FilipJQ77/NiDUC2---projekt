@@ -1,6 +1,6 @@
-# encodes given list of bits with a Hamming code
-# https://en.wikipedia.org/wiki/Hamming_code#General_algorithm
 def encode_hamming(bits: list) -> list:
+    """Encodes a given list of bits with Hamming code.
+    https://en.wikipedia.org/wiki/Hamming_code#General_algorithm"""
     new_bits = list.copy(bits)
     bits_amount = len(new_bits)
     index = 1
@@ -16,7 +16,7 @@ def encode_hamming(bits: list) -> list:
         summ = 0
         while i <= bits_amount:
             for j in range(index):
-                # ten if jest po to że jeśli mamy ucięty kod hamminga to nie wiemy kiedy jest koniec danych
+                # we need to check if we haven't exceeded data amount (in case the Hamming code is not full)
                 if i <= bits_amount:
                     summ += new_bits[i - 1]
                     i += 1
@@ -31,8 +31,8 @@ def encode_hamming(bits: list) -> list:
     return new_bits
 
 
-# decodes given list of bits with a Hamming code
 def decode_hamming(bits: list) -> list:
+    """Decodes a given list of bits with Hamming code."""
     bits_amount = len(bits)
     index = 1
     wrong_bit_index = 0
@@ -42,7 +42,7 @@ def decode_hamming(bits: list) -> list:
         summ = 0
         while i < bits_amount:
             for j in range(index):
-                # ten if jest po to że jeśli mamy ucięty kod hamminga to nie wiemy kiedy jest koniec danych
+                # we need to check if we haven't exceeded data amount (in case the Hamming code is not full)
                 if i < bits_amount:
                     summ += bits[i - 1]
                     i += 1
@@ -61,11 +61,11 @@ def decode_hamming(bits: list) -> list:
         # checking the additional parity bit
         for i in range(bits_amount - 1):
             summ += bits[i]
-        # todo check
         if summ % 2 == bits[-1]:
             is_fixed = "F"
         else:
             return ["R"]
+
     index = 1
     new_bits = []
     for i in range(bits_amount - 1):
