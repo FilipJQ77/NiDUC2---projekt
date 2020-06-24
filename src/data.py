@@ -38,19 +38,6 @@ def analyse_data(filename: str):
     analyse(results)
 
 
-# todo zaaplikować do analyse
-def analyse_test():
-    xdata = ["2048", "4096", "", "8192"]
-    ydata = [0.000146, 0.000311, None, 0.000605]
-    fig = plt.figure()
-    ax1 = fig.add_subplot()
-    ax1.set_ylabel("Średni czas [s]")
-    ax1.set_xlabel("Liczba liczb")
-    ax1.plot(xdata, ydata, ".")
-    plt.show()
-    plt.waitforbuttonpress()
-
-
 def analyse(results: dict):
     """Analyses sending data test results in form of a dictionary of lists."""
     for desc, result_list in results.items():  # desc = key, result_list = item
@@ -81,7 +68,6 @@ def analyse(results: dict):
         ax_box.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4], vert=False)
         counts, bins, bars = ax_hist.hist(result_list, bins=np.arange(min(result_list), max(result_list) + 1, 1))
         # counts, bins, bars = plt.hist(result_list, bins=20)  # histogram
-        # todo osie wykresu, boxplot nad histogramem
         x_data = []
         for i in range(len(bins) - 1):
             x_data.append((bins[i] + bins[i + 1]) / 2)
