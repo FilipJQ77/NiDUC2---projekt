@@ -66,15 +66,20 @@ def analyse(results: dict):
         ax_hist.set_ylabel(f"Frequency")
         # boxplot and histogram
         ax_box.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4], vert=False)
-        counts, bins, bars = ax_hist.hist(result_list, bins=np.arange(min(result_list), max(result_list) + 1, 1))
-        # counts, bins, bars = plt.hist(result_list, bins=20)  # histogram
+        hist_bins = np.arange(min(result_list), max(result_list) + 1, 1)
+        if len(hist_bins) > 20:
+            hist_bins = 8
+        counts, hist_bins, bars = ax_hist.hist(result_list, bins=hist_bins)
         x_data = []
-        for i in range(len(bins) - 1):
-            x_data.append((bins[i] + bins[i + 1]) / 2)
+        for i in range(len(hist_bins) - 1):
+            x_data.append((hist_bins[i] + hist_bins[i + 1]) / 2)
         y_data = counts
-        params, params_cov = opt.curve_fit(gauss_function, x_data, y_data, p0=[max(y_data), quartiles[1], iqr / 1.349])
-        print(f"{desc}: gauss parameters: {params}")
-        ax_hist.plot(x_data, gauss_function(x_data, params[0], params[1], params[2]), label="Fitted function")
+        try:
+            params, params_cov = opt.curve_fit(gauss_function, x_data, y_data, p0=[max(y_data), quartiles[1], iqr / 1.349])
+            print(f"{desc}: Gauss parameters (a, mu, sigma): {params}")
+            ax_hist.plot(x_data, gauss_function(x_data, params[0], params[1], params[2]))
+        except Exception as e:
+            print("Couldn't estimate Gauss function")
         plt.waitforbuttonpress()
 
 

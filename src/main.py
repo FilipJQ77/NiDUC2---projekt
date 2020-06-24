@@ -6,7 +6,7 @@ repetition_code = "R"
 
 
 def generate_filename(code_type, bits_amount, block_size, probability):
-    return f"{code_type}_{bits_amount}_{block_size}_{probability}.csv"
+    return f"../{code_type}_{bits_amount}_{block_size}_{probability}.csv"
 
 
 def get_data_from_user() -> tuple:
@@ -45,6 +45,7 @@ def analyse():
             break
         filename = generate_filename(code_type, bits_amount, block_size, probability)
         data.analyse_data(filename)
+        print()
 
 
 def menu():
