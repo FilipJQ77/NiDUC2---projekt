@@ -68,7 +68,7 @@ def analyse(results: dict):
         ax_box.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4], vert=False)
         hist_bins = np.arange(min(result_list), max(result_list) + 1, 1)
         if len(hist_bins) > 20:
-            hist_bins = 8
+            hist_bins = 20
         counts, hist_bins, bars = ax_hist.hist(result_list, bins=hist_bins)
         x_data = []
         for i in range(len(hist_bins) - 1):
