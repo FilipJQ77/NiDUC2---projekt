@@ -3,6 +3,7 @@ import random
 import statistics
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
 import scipy.optimize as opt
 import csv
 from src import repetition, crc, hamming
@@ -58,12 +59,15 @@ def analyse(results: dict):
             print(f"{desc}: Pearson skewness (median) = {skewness_median}")
         else:
             print(f"Skewness = 0")
-        fig, (ax_box, ax_hist) = plt.subplots(2, sharex=True)
+        # todo 5 subplotów, boxplot 1 górny, histogram 4 dolne
+        fig = plt.figure()
+        grid = GridSpec(5, 1, figure=fig)
+        ax_box = fig.add_subplot(grid[0, 0])
+        ax_hist = fig.add_subplot(grid[1:, 0])
+        ax_box.get_shared_x_axes().join(ax_box, ax_hist)
         fig.suptitle(f"{desc}: transmissions")
-        ax_box.title.set_text("Boxplot")
-        ax_hist.title.set_text("Histogram")
         ax_hist.set_xlabel(f"Number of packets sent: {desc}")
-        ax_hist.set_ylabel(f"Frequency")
+        ax_hist.set_ylabel(f"Occurences")
         # boxplot and histogram
         ax_box.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4], vert=False)
         hist_bins = np.arange(min(result_list), max(result_list) + 1, 1)
@@ -75,7 +79,8 @@ def analyse(results: dict):
             x_data.append((hist_bins[i] + hist_bins[i + 1]) / 2)
         y_data = counts
         try:
-            params, params_cov = opt.curve_fit(gauss_function, x_data, y_data, p0=[max(y_data), quartiles[1], iqr / 1.349])
+            params, params_cov = opt.curve_fit(gauss_function, x_data, y_data,
+                                               p0=[max(y_data), quartiles[1], iqr / 1.349])
             print(f"{desc}: Gauss parameters (a, mu, sigma): {params}")
             ax_hist.plot(x_data, gauss_function(x_data, params[0], params[1], params[2]))
         except Exception as e:
