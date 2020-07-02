@@ -41,49 +41,47 @@ def analyse_data(filename: str):
 
 def analyse(results: dict):
     """Analyses sending data test results in form of a dictionary of lists."""
-    for desc, result_list in results.items():  # desc = key, result_list = item
-        mode = statistics.mode(result_list)
-        average = statistics.mean(result_list)
+    for desc, results_list in results.items():  # desc = key, results_list = item
+        mode = statistics.mode(results_list)
+        print(f"{desc}: Mode = {mode}")
+        average = statistics.mean(results_list)
         print(f"{desc}: Average = {average}")
-        standard_deviation = statistics.stdev(result_list)
+        standard_deviation = statistics.stdev(results_list)
         print(f"{desc}: Standard deviation = {standard_deviation}")
-        quartiles = statistics.quantiles(result_list, method='inclusive')
+        quartiles = statistics.quantiles(results_list, method='inclusive')
         print(f"{desc}: Quartiles = {quartiles}")
         iqr = quartiles[2] - quartiles[0]
-        q0 = quartiles[0] - 1.5 * iqr
-        q4 = quartiles[2] + 1.5 * iqr
         if standard_deviation:
             skewness_mode = (average - mode) / standard_deviation
             skewness_median = 3 * (average - quartiles[1]) / standard_deviation
             print(f"{desc}: Pearson skewness (mode) = {skewness_mode}")
             print(f"{desc}: Pearson skewness (median) = {skewness_median}")
         else:
-            print(f"Skewness = 0")
-        # todo 5 subplotów, boxplot 1 górny, histogram 4 dolne
+            print("Skewness = 0")
         fig = plt.figure()
         grid = GridSpec(5, 1, figure=fig)
         ax_box = fig.add_subplot(grid[0, 0])
         ax_hist = fig.add_subplot(grid[1:, 0])
         ax_box.axis('off')
-        ax_box.grid()
         ax_hist.grid()
         ax_box.get_shared_x_axes().join(ax_box, ax_hist)
         fig.suptitle(f"{desc}: transmissions")
         ax_hist.set_xlabel(f"Number of packets sent: {desc}")
-        ax_hist.set_ylabel(f"Occurences")
+        ax_hist.set_ylabel("Occurences")
+        q0 = quartiles[0] - 1.5 * iqr
+        q4 = quartiles[2] + 1.5 * iqr
         # boxplot and histogram
         ax_box.boxplot([q0, quartiles[0], quartiles[1], quartiles[2], q4], vert=False)
-        hist_bins = np.arange(min(result_list), max(result_list) + 1, 1)
+        hist_bins = np.arange(min(results_list), max(results_list) + 1, 1)
         if len(hist_bins) > 20:
             hist_bins = 20
-        counts, hist_bins, bars = ax_hist.hist(result_list, bins=hist_bins)
+        counts, bins, bars = ax_hist.hist(results_list, bins=hist_bins)
         x_data = []
-        for i in range(len(hist_bins) - 1):
-            x_data.append((hist_bins[i] + hist_bins[i + 1]) / 2)
+        for i in range(len(bins) - 1):
+            x_data.append((bins[i] + bins[i + 1]) / 2)
         y_data = counts
         try:
-            params, params_cov = opt.curve_fit(gauss_function, x_data, y_data,
-                                               p0=[max(y_data), quartiles[1], iqr / 1.349])
+            params,params_cov=opt.curve_fit(gauss_function, x_data, y_data, p0=[max(y_data), quartiles[1], iqr / 1.349])
             print(f"{desc}: Gauss parameters (a, mu, sigma): {params}")
             ax_hist.plot(x_data, gauss_function(x_data, params[0], params[1], params[2]))
         except Exception as e:
